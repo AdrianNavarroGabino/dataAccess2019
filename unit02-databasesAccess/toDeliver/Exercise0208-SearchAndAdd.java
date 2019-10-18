@@ -25,38 +25,51 @@ public class Exercise0208
 	
     public static void main( String[] args )
     {
-    	int option;
-    	do
-    	{
-	        System.out.println("1. Search article");
-	        System.out.println("2. Add article");
-	        System.out.println("3. Exit");
-	        System.out.print("Choose an option: ");
-	        option = sc.nextInt();
-	        sc.nextLine();
-	        
-	        if(option == 1)
-	        {
-	        	searchArticle();
-	        }
-	        else if(option == 2)
-	        {
-	        	addArticle();
-	        }
-	        else if(option == 3)
-	        {
-	        	System.out.println("Bye");
-	        }
-	        else
-	        {
-	        	System.out.println("Wrong option");
-	        }
-	        System.out.println();
-    	} while(option != 3);
-        
+    	try
+		{
+	    	Class.forName("org.postgresql.Driver");
+			Connection conn = DriverManager.getConnection(url, user, password);
+			Statement statement = conn.createStatement();
+			
+	    	int option;
+	    	do
+	    	{
+		        System.out.println("1. Search article");
+		        System.out.println("2. Add article");
+		        System.out.println("3. Exit");
+		        System.out.print("Choose an option: ");
+		        option = sc.nextInt();
+		        sc.nextLine();
+		        
+		        if(option == 1)
+		        {
+		        	searchArticle(statement);
+		        }
+		        else if(option == 2)
+		        {
+		        	addArticle(statement);
+		        }
+		        else if(option == 3)
+		        {
+		        	System.out.println("Bye");
+		        }
+		        else
+		        {
+		        	System.out.println("Wrong option");
+		        }
+		        System.out.println();
+	    	} while(option != 3);
+	    	conn.close();
+		} catch (ClassNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
     }
     
-    public static void searchArticle()
+    public static void searchArticle(Statement statement)
     {
     	System.out.print("Article to search: ");
     	String search = sc.nextLine().toUpperCase();
@@ -66,9 +79,6 @@ public class Exercise0208
     			search + "%';";
     	try
 		{
-			Class.forName("org.postgresql.Driver");
-			Connection conn = DriverManager.getConnection(url, user, password);
-			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery(sql);
 			while(rs.next())
 			{
@@ -79,22 +89,18 @@ public class Exercise0208
 						" €");
 			}
 			rs.close();
-			conn.close();
 			
 			if(!results)
 			{
 				System.out.println("There is no data");
 			}
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
     }
     
-    public static void addArticle()
+    public static void addArticle(Statement statement)
     {
     	System.out.print("Enter name: ");
     	String name = sc.nextLine();
@@ -106,19 +112,13 @@ public class Exercise0208
     	
     	try
 		{
-			Class.forName("org.postgresql.Driver");
-			Connection conn = DriverManager.getConnection(url, user, password);
-			Statement statement = conn.createStatement();
 			int affectedRows = statement.executeUpdate(sql);
 			if(affectedRows == 1)
 			{
 				System.out.println("Article inserted");
 			}
-			conn.close();
-		} catch (ClassNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (SQLException e)
+		}
+    	catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
