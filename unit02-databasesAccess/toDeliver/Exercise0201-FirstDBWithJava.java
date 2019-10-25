@@ -8,8 +8,6 @@
  * Add two sample data. Show existing data.
  */
 
-package com.adriannavarrogabino.exercisespostgresql;
-
 import java.sql.*;
 
 public class Exercise0201
@@ -45,7 +43,9 @@ public class Exercise0201
 										"WHERE nombre = ?;");
 			ps.setString(1, name);
 			
-			if(ps.executeQuery() == null)
+			rs = ps.executeQuery();
+			
+			if(!rs.next())
 			{
 				ps = conn.prepareStatement("INSERT INTO articulos (nombre)" +
 											" VALUES (?)");
