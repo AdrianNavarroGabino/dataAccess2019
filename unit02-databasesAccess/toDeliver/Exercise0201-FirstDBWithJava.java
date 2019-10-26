@@ -10,6 +10,8 @@
 
 import java.sql.*;
 
+import org.apache.commons.dbutils.DbUtils;
+
 public class Exercise0201
 {
 	static String url = "jdbc:postgresql://localhost:5432/dia01";
@@ -20,8 +22,10 @@ public class Exercise0201
 	static PreparedStatement ps = null;
 	static ResultSet rs = null;
 	
-	public static void createArticles()
+	public static void createArticles(Connection conn)
 	{
+		PreparedStatement ps = null;
+		
 		try
 		{
 			ps = conn.prepareStatement("CREATE TABLE articulos(" +
@@ -29,46 +33,54 @@ public class Exercise0201
 					"nombre VARCHAR(100));");
 			
 			ps.executeUpdate();
+			
+			System.out.println("Table articulos created");
 		}
 		catch (SQLException e)
 		{
+			System.out.println("Table articulos already exists");
+		}
+		finally
+		{
+			DbUtils.closeQuietly(ps);
 		}
 	}
 	
-	public static void insertArticle(String name)
+	public static void insertArticle(Connection conn, String name)
 	{
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
 		try
 		{
-			ps = conn.prepareStatement("SELECT * FROM articulos " +
-										"WHERE nombre = ?;");
+			ps = conn.prepareStatement("INSERT INTO articulos (nombre)" +
+										" VALUES (?)");
 			ps.setString(1, name);
-			
-			rs = ps.executeQuery();
-			
-			if(!rs.next())
-			{
-				ps = conn.prepareStatement("INSERT INTO articulos (nombre)" +
-											" VALUES (?)");
-				ps.setString(1, name);
-				ps.executeUpdate();
-				System.out.println(name + " inserted");
-			}
+			ps.executeUpdate();
+			System.out.println(name + " inserted");
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
+		finally
+		{
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(ps);
+		}
 	}
 	
 	public static void main(String[] args)
 	{
+		Connection conn = null;
+		
 		try
 		{
 			Class.forName("org.postgresql.Driver");
 			conn = DriverManager.getConnection(url, user, password);
-			createArticles();
-			insertArticle("Table");
-			insertArticle("Chair");
+			createArticles(conn);
+			insertArticle(conn, "Table");
+			insertArticle(conn, "Chair");
 		}
 		catch(Exception e)
 		{
@@ -76,30 +88,7 @@ public class Exercise0201
 		}
 		finally
 		{
-			if (rs != null)
-			{
-				try
-				{
-					rs.close();
-				}
-				catch (SQLException e) { }
-			}
-			if (ps != null)
-			{
-				try
-				{
-					ps.close();
-				} 
-				catch (SQLException e) { }
-			}
-			if (conn != null)
-			{
-				try
-				{
-					conn.close();
-				}
-				catch (SQLException e) { }
-			}
+			DbUtils.closeQuietly(conn);
 		}
 	}
 }
