@@ -8,42 +8,56 @@
 
 import java.sql.*;
 
+import org.apache.commons.dbutils.DbUtils;
+
 public class Exercise0202 {
 	static String url = "jdbc:postgresql://localhost:5432/dia01";
 	static String user = "postgres";
 	static String password = "1234";
 	static String sql = "";
-	static Connection conn = null;
-	static PreparedStatement ps = null;
-	static ResultSet rs = null;
 	
-	public static void addPriceColumn()
+	public static void addPriceColumn(Connection conn)
 	{
+		PreparedStatement ps = null;
+		
 		try {
 			ps = conn.prepareStatement(
 					"ALTER TABLE ARTICULOS ADD COLUMN precio REAL DEFAULT 0;");
 			ps.executeUpdate();
-		} catch (SQLException e) {
+			
+			System.out.println("Price column added");
+		}
+		catch (SQLException e)
+		{
+			System.out.println("Price column is already in the table");
+		}
+		finally
+		{
+			DbUtils.closeQuietly(ps);
 		}
 	}
 	
-	public static void insertArticle(String name, double price)
+	public static void insertArticle(Connection conn, String name, double price)
 	{
+		PreparedStatement psSelect = null;
+		PreparedStatement psInsert = null;
+		ResultSet rs = null;
+		
 		try
 		{
-			ps = conn.prepareStatement("SELECT * FROM articulos " +
+			psSelect = conn.prepareStatement("SELECT * FROM articulos " +
 										"WHERE nombre = ?;");
-			ps.setString(1, name);
+			psSelect.setString(1, name);
 			
-			rs = ps.executeQuery();
+			rs = psSelect.executeQuery();
 			
 			if(!rs.next())
 			{
-				ps = conn.prepareStatement("INSERT INTO articulos " +
+				psInsert = conn.prepareStatement("INSERT INTO articulos " +
 											"(nombre, precio) VALUES (?, ?)");
-				ps.setString(1, name);
-				ps.setDouble(2, price);
-				ps.executeUpdate();
+				psInsert.setString(1, name);
+				psInsert.setDouble(2, price);
+				psInsert.executeUpdate();
 				System.out.println(name + " inserted");
 			}
 		}
@@ -51,10 +65,20 @@ public class Exercise0202 {
 		{
 			e.printStackTrace();
 		}
+		finally
+		{
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(psSelect);
+			DbUtils.closeQuietly(psInsert);
+		}
 	}
 	
-	public static void seeArticlesByPrice(double price)
+	public static void seeArticlesByPrice(Connection conn, double price)
 	{
+		boolean rsEmpty = true;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
 		try
 		{
 			ps = conn.prepareStatement("SELECT * FROM articulos " +
@@ -65,6 +89,7 @@ public class Exercise0202 {
 			
 			while(rs.next())
 			{
+				rsEmpty = false;
 				System.out.println(rs.getString("nombre") + " - " +
 						rs.getDouble("precio"));
 			}
@@ -73,17 +98,29 @@ public class Exercise0202 {
 		{
 			e.printStackTrace();
 		}
+		finally
+		{
+			DbUtils.closeQuietly(rs);
+			DbUtils.closeQuietly(ps);
+		}
+		
+		if(rsEmpty)
+		{
+			System.out.println("No results");
+		}
 	}
 	
 	public static void main(String[] args)
 	{
+		Connection conn = null;
+		
 		try
 		{
 			Class.forName("org.postgresql.Driver");
 			conn = DriverManager.getConnection(url, user, password);
-			addPriceColumn();
-			insertArticle("Bed", 12.5);
-			seeArticlesByPrice(10);
+			addPriceColumn(conn);
+			insertArticle(conn, "Bed", 12.5);
+			seeArticlesByPrice(conn, 10);
 		}
 		catch(Exception e)
 		{
@@ -91,30 +128,7 @@ public class Exercise0202 {
 		}
 		finally
 		{
-			if (rs != null)
-			{
-				try
-				{
-					rs.close();
-				}
-				catch (SQLException e) { }
-			}
-			if (ps != null)
-			{
-				try
-				{
-					ps.close();
-				} 
-				catch (SQLException e) { }
-			}
-			if (conn != null)
-			{
-				try
-				{
-					conn.close();
-				}
-				catch (SQLException e) { }
-			}
+			DbUtils.closeQuietly(conn);
 		}
 	}
 }
