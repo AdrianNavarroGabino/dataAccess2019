@@ -27,7 +27,7 @@ public class Exercise241 {
 			conn = DriverManager.getConnection(url, user, password);
 			
 			ps = conn.prepareStatement("CREATE TABLE PRUEBA1 (" +
-					"CODIGO SERIAL PRIMARY KEY," +
+					"CODIGO VARCHAR(100) PRIMARY KEY," +
 					"NOMBRE VARCHAR(50)," +
 					"SITUACION VARCHAR(100));");
 			ps.executeUpdate();
