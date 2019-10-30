@@ -43,13 +43,9 @@ public class Exercise261 {
 			Class.forName("org.postgresql.Driver");
 			conn = DriverManager.getConnection(url, user, password);
 			
-			Scanner sc = new Scanner(System.in);
-			System.out.print("Enter device id: ");
-			String deviceId = sc.nextLine();
-			
 			cs = conn.prepareCall("{call FN_GET_DEVICE_NAME(?)}");
 			cs.registerOutParameter(1, Types.VARCHAR);
-			cs.setString(1, deviceId);
+			cs.setString(1, "Device1");
 			cs.execute();
 			System.out.println("Name: " + cs.getString(1));
 		} catch (ClassNotFoundException e) {
