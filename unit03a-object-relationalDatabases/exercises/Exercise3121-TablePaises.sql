@@ -1,3 +1,12 @@
+-- Adrián Navarro Gabino
+
+/*
+ * 3.1.2.1: Create a database called “world”. Create in it a table "countries". 
+ * For each country, for now we will keep only three fields: a code (“cod”),
+ * the name (“name”) and the number of inhabitants (“inhabitants”).
+ * Add two sample data.
+ */
+
 CREATE DATABASE MUNDO;
 
 CREATE TABLE PAISES
