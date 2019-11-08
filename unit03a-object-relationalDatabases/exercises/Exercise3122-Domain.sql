@@ -1,0 +1,2 @@
+CREATE DOMAIN cantidadHabitantes AS NUMERIC(10)
+CHECK (VALUE >= 0);
