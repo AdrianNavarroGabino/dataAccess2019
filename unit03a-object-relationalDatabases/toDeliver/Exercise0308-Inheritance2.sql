@@ -1,3 +1,16 @@
+-- Adrián Navarro Gabino
+
+/*
+ * It can be seen that the Client and Official entities are special
+ * specializations of the "superentity" of Persons, so that both clients
+ * and officials would inherit their attributes. However, the "People"
+ * entity would correspond to a generalization of Clients and Officials
+ * which does not have specific attributes of the "sub-entities".
+ *
+ * Create the three corresponding tables with their attributes and
+ * inheritances. Also, enter sample data.
+ */
+
 CREATE TABLE PERSONAS
 (
 	NUMERO SERIAL PRIMARY KEY,
