@@ -124,6 +124,8 @@ public class Main {
 		
 		db.set(new Tarea(LocalDate.of(anyo, mes, dia), descripcion,
 				categoria, prioridad));
+                
+        db.commit();
 		
 		System.out.println("Tarea añadida");
 	}
