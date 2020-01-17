@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 10 ene. 2020 11:48:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.adriannavarrogabino.peliculas.Peliculas" table="peliculas" schema="public" optimistic-lock="version">
+        <id name="nombre" type="string">
+            <column name="nombre" length="60" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="tematicas" class="com.adriannavarrogabino.peliculas.Tematicas" fetch="select">
+            <column name="tematica" length="60" />
+        </many-to-one>
+        <property name="puntuacion" type="java.lang.Integer">
+            <column name="puntuacion" />
+        </property>
+        <property name="duracion" type="java.lang.Integer">
+            <column name="duracion" />
+        </property>
+    </class>
+</hibernate-mapping>
