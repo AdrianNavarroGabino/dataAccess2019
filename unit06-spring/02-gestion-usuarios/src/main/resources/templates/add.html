@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"></link>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	<form th:action="@{/create}" th:object="${usuario}" method="post">
+		<div class="errorblock" th:if="${#fields.hasErrors('*')}">
+	        <ul>
+	            <li th:each="err : ${#fields.errors('*')}"
+	                th:text="${err}">Input is incorrect</li>
+	        </ul>
+	    </div>
+	    <fieldset>
+	        <legend>Datos del usuario</legend>
+	        <table>
+	        	<tr>
+	                <td><label th:text="${id}">Id: </label></td>
+	                <td><input type="number" th:field="*{id}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${nombre}">Nombre: </label></td>
+	                <td><input type="text" th:field="*{nombre}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${correo}">Correo: </label></td>
+	                <td><input type="text" th:field="*{mail}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${pass}">Password: </label></td>
+	                <td><input type="password" th:field="*{password}" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Registrar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/}">Volver</a></p>
+</body>
+</html>

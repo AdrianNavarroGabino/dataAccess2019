@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+table.lista {
+  border-collapse: collapse;
+}
+
+.lista {
+  border: 1px solid black;
+}
+
+div.errorblock {
+	border: 1px solid red;
+	color: red;
+}

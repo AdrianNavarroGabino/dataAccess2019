@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	
+	<form th:action="@{/removed}" th:object="${usuario}" method="post">
+	    <fieldset>
+	        <legend>Datos del usuario</legend>
+	        <table>
+	        	<tr>
+	                <td><label th:text="${id}">Id: </label></td>
+	                <td><input type="number" th:field="*{id}" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Borrar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/}">Volver</a></p>
+</body>
+</html>
