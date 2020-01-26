@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	<form th:action="@{/productos/create}" th:object="${producto}" method="post">
+		<div class="errorblock" th:if="${#fields.hasErrors('*')}">
+	        <ul>
+	            <li th:each="err : ${#fields.errors('*')}"
+	                th:text="${err}">Input is incorrect</li>
+	        </ul>
+	    </div>
+	    <fieldset>
+	        <legend>Datos del producto</legend>
+	        <table>
+	            <tr>
+	                <td><label th:text="${descripcion}">Descripción: </label></td>
+	                <td><input type="text" th:field="*{descripcion}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${precio}">Precio: </label></td>
+	                <td><input type="number" placeholder="1.0" step="0.01" min="0" th:field="*{precio}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${fechaAlta}">Fecha de alta: </label></td>
+	                <td><input type="date" th:field="*{fechaAlta}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${disponibilidad}">Disponibilidad: </label></td>
+	                <td><input type="checkbox" name="dispCheck" th:checked="${dispCheck}" th:field="*{disponibilidad}" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Registrar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/productos}">Volver</a></p>
+</body>
+</html>

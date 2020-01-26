@@ -1,0 +1,17 @@
+INSERT INTO clientes (nombre, apellido, email, create_at) VALUES ('Adrián', 'Navarro', 'adrian@adrian.com', '2020-01-18');
+INSERT INTO clientes (nombre, apellido, email, create_at) VALUES ('Mr. John', 'Doe', 'john.doe@gmail.com', '2020-01-02');
+INSERT INTO clientes (nombre, apellido, email, create_at) VALUES ('Linus', 'Torvalds', 'linus@torvalds.com', '2020-01-13');
+INSERT INTO clientes (nombre, apellido, email, create_at) VALUES ('Rasmus', 'Lerdorf', 'rasmus@rasmus.com', '2020-01-05');
+INSERT INTO clientes (nombre, apellido, email, create_at) VALUES ('Erich', 'Gamma', 'eric@gamma.com', '2020-01-11');
+INSERT INTO clientes (nombre, apellido, email, create_at) VALUES ('Richard', 'Helm', 'richard@richard.com', '2020-01-17');
+INSERT INTO productos (descripcion, precio, fecha_alta, disponibilidad) VALUES ('Libro 1', 20, '2010-06-04', true);
+INSERT INTO productos (descripcion, precio, fecha_alta, disponibilidad) VALUES ('Pelicula 1', 15.67, '2000-12-21', false);
+INSERT INTO productos (descripcion, precio, fecha_alta, disponibilidad) VALUES ('Silla', 25,'2019-01-20', true);
+INSERT INTO productos (descripcion, precio, fecha_alta, disponibilidad) VALUES ('Mesa', 123.32, '2020-01-01', true);
+INSERT INTO productos (descripcion, precio, fecha_alta, disponibilidad) VALUES ('Ordenador', 1299.99,'2019-12-01', true);
+INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (1, 1, '2020-01-01');
+INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (2, 1, '2019-02-01');
+INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (1, 1, '2020-01-21');
+INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (3, 4, '2019-12-21');
+INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (1, 3, '2020-01-01');
+INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (2, 2, '2019-02-01');

@@ -1,0 +1,96 @@
+package com.example.springboot.backend.apirest.models.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+@Entity
+@Table(name="productos")
+public class Producto implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="codproducto")
+	private Long codProducto;
+	
+	@Column
+	private String descripcion;
+	
+	@Column
+	private Double precio;
+	
+	@Column(name="fecha_alta")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Temporal(TemporalType.DATE)
+	private Date fechaAlta;
+	
+	@Column
+	private boolean disponibilidad;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "producto")
+	private Set<ProductoCliente> productosClientes = new HashSet<>(0);
+
+	public Long getCodProducto() {
+		return codProducto;
+	}
+
+	public void setCodProducto(Long codProducto) {
+		this.codProducto = codProducto;
+	}
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	public Double getPrecio() {
+		return precio;
+	}
+
+	public void setPrecio(Double precio) {
+		this.precio = precio;
+	}
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+
+	public boolean isDisponibilidad() {
+		return disponibilidad;
+	}
+
+	public void setDisponibilidad(boolean disponibilidad) {
+		this.disponibilidad = disponibilidad;
+	}
+
+	public Set<ProductoCliente> getProductosClientes() {
+		return productosClientes;
+	}
+
+	public void setProductosClientes(Set<ProductoCliente> productosClientes) {
+		this.productosClientes = productosClientes;
+	}
+}
