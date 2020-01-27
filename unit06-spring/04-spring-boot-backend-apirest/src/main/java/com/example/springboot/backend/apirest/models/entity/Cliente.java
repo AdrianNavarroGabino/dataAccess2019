@@ -21,6 +21,8 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="clientes")
 public class Cliente implements Serializable {
@@ -53,6 +55,7 @@ public class Cliente implements Serializable {
 	private Date createAt;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cliente")
+	@JsonIgnore
 	private Set<ProductoCliente> productosClientes = new HashSet<>(0);
 
 	public Long getId() {
@@ -101,5 +104,11 @@ public class Cliente implements Serializable {
 
 	public void setProductosClientes(Set<ProductoCliente> productosClientes) {
 		this.productosClientes = productosClientes;
+	}
+
+	@Override
+	public String toString() {
+		return "Cliente [id=" + id + ", nombre=" + nombre + ", apellido=" + apellido + ", email=" + email
+				+ ", createAt=" + createAt + "]";
 	}
 }

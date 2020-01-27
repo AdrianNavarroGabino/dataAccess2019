@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	<form th:action="@{/ventas/borrado}" th:object="${productoClienteId}" method="post">
+		<div class="errorblock" th:if="${#fields.hasErrors('*')}">
+	        <ul>
+	            <li th:each="err : ${#fields.errors('*')}"
+	                th:text="${err}">Input is incorrect</li>
+	        </ul>
+	    </div>
+	    <fieldset>
+	        <legend>Datos de la venta</legend>
+	        <table>
+	            <tr>
+	                <td><label th:text="${clienteId}">Id cliente: </label></td>
+	                <td><input type="number" th:field="*{clienteId}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${productoId}">Id producto: </label></td>
+	                <td><input type="number" th:field="*{productoId}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${fecha}">Fecha: </label></td>
+	                <td><input type="date" th:field="*{fecha}" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Borrar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/ventas}">Volver</a></p>
+</body>
+</html>

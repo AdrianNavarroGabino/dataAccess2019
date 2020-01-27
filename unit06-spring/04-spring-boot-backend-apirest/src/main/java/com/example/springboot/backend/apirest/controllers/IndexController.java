@@ -1,18 +1,24 @@
 package com.example.springboot.backend.apirest.controllers;
 
-import javax.validation.Valid;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.example.springboot.backend.apirest.models.entity.Cliente;
 import com.example.springboot.backend.apirest.models.entity.Producto;
+import com.example.springboot.backend.apirest.models.entity.ProductoCliente;
+import com.example.springboot.backend.apirest.models.entity.ProductoClienteId;
 import com.example.springboot.backend.apirest.models.services.ClienteServiceImpl;
+import com.example.springboot.backend.apirest.models.services.ProductoClienteImpl;
 import com.example.springboot.backend.apirest.models.services.ProductoServiceImpl;
 
 @Controller
@@ -23,6 +29,9 @@ public class IndexController {
 	
 	@Autowired
 	ProductoServiceImpl productoService = new ProductoServiceImpl();
+	
+	@Autowired
+	ProductoClienteImpl productoClienteService = new ProductoClienteImpl();
 	
 	@GetMapping({"/", "", "/index", "/home"})
 	public String index(Model model)
@@ -117,35 +126,34 @@ public class IndexController {
         model.addObject("cliente", cliente);
         boolean found = false;
         
-        for(Cliente c: clienteService.findAll())
-        {
-        	if(c.getId() == cliente.getId())
-        	{
-        		found = true;
-        		if(!cliente.getNombre().equals(""))
-        		{
-        			c.setNombre(cliente.getNombre());
-        		}
-        		
-        		if(!cliente.getEmail().equals(""))
-        		{
-        			c.setEmail(cliente.getEmail());
-        		}
-        		
-        		if(!cliente.getApellido().equals(""))
-        		{
-        			c.setApellido(cliente.getApellido());
-        		}
-        		
-        		if(cliente.getCreateAt().getTime() != 0)
-        		{
-        			c.setCreateAt(cliente.getCreateAt());
-        		}
-        		
-        		clienteService.save(c);
-        		break;
-        	}
-        }
+        Cliente c = clienteService.findById(cliente.getId());
+
+    	if(c != null)
+    	{
+    		found = true;
+    		if(!cliente.getNombre().equals(""))
+    		{
+    			c.setNombre(cliente.getNombre());
+    		}
+    		
+    		if(!cliente.getEmail().equals(""))
+    		{
+    			c.setEmail(cliente.getEmail());
+    		}
+    		
+    		if(!cliente.getApellido().equals(""))
+    		{
+    			c.setApellido(cliente.getApellido());
+    		}
+    		
+    		if(cliente.getCreateAt() != null)
+    		{
+    			c.setCreateAt(cliente.getCreateAt());
+    		}
+    		
+    		clienteService.save(c);
+    	}
+        
         model.setViewName("ready");
         mod.addAttribute("titulo", "Editar cliente");
         if(found)
@@ -283,32 +291,31 @@ public class IndexController {
         model.addObject("producto", producto);
         boolean found = false;
         
-        for(Producto p: productoService.findAll())
-        {
-        	if(p.getCodProducto() == producto.getCodProducto())
-        	{
-        		found = true;
-        		if(!producto.getDescripcion().equals(""))
-        		{
-        			p.setDescripcion(producto.getDescripcion());
-        		}
-        		
-        		if(producto.getPrecio() != 0)
-        		{
-        			p.setPrecio(producto.getPrecio());
-        		}
-        		
-        		if(producto.getFechaAlta().getTime() != 0)
-        		{
-        			p.setFechaAlta(producto.getFechaAlta());
-        		}
-        		
-        		p.setDisponibilidad(producto.isDisponibilidad());
-        		
-        		productoService.save(p);
-        		break;
-        	}
-        }
+        Producto p = productoService.findById(producto.getCodProducto());
+        
+    	if(p != null)
+    	{
+    		found = true;
+    		if(!producto.getDescripcion().equals(""))
+    		{
+    			p.setDescripcion(producto.getDescripcion());
+    		}
+    		
+    		if(producto.getPrecio() != 0)
+    		{
+    			p.setPrecio(producto.getPrecio());
+    		}
+    		
+    		if(producto.getFechaAlta() != null)
+    		{
+    			p.setFechaAlta(producto.getFechaAlta());
+    		}
+    		
+    		p.setDisponibilidad(producto.isDisponibilidad());
+    		
+    		productoService.save(p);
+    	}
+        
         model.setViewName("ready");
         mod.addAttribute("titulo", "Editar producto");
         if(found)
@@ -355,6 +362,191 @@ public class IndexController {
         else
         {
         	mod.addAttribute("resultado", "Producto no encontrado");
+        }
+        return model;
+    }
+	
+	@GetMapping("/ventas")
+	public String indexVentas(Model model)
+	{
+		model.addAttribute("titulo", "Ventas");
+		return "ventas/index";
+	}
+	
+	@GetMapping("/ventas/listar")
+	public String listarVentas(Model model)
+	{
+		model.addAttribute("titulo", "Listar ventas");
+		model.addAttribute("ventas", productoClienteService.findAll());
+		return "ventas/listar";
+	}
+	
+	@GetMapping("/ventas/anyadir")
+	public String addVenta(Model model)
+	{
+		model.addAttribute("titulo", "Añadir venta");
+		model.addAttribute("clienteId", "Id cliente:");
+        model.addAttribute("productoId", "Id producto:");
+		model.addAttribute("fecha", "Fecha:");
+		model.addAttribute("productoClienteId", new ProductoClienteId());
+		return "ventas/anyadir";
+	}
+	
+	@RequestMapping("/ventas/create")
+    public ModelAndView createVenta(@Valid ProductoClienteId productoClienteId, BindingResult result, Model mod) {
+        ModelAndView model = new ModelAndView();
+        boolean exists = false;
+        model.addObject("productoClienteId", productoClienteId);
+        
+        if(!result.hasErrors())
+        {
+        	for(ProductoCliente p: productoClienteService.findAll())
+        	{
+        		if(p.getCliente().getId() == productoClienteId.getClienteId() &&
+        				p.getProducto().getCodProducto() == productoClienteId.getProductoId() &&
+        				p.getFecha() == productoClienteId.getFecha())
+        		{
+        			exists = true;
+        			break;
+        		}
+        	}
+        	
+        	model.setViewName("ready");
+        	
+        	if(!exists)
+        	{
+        		ProductoCliente p = new ProductoCliente();
+        		p.setId(productoClienteId);
+        		p.setCliente(clienteService.findById(productoClienteId.getClienteId()));
+        		p.setProducto(productoService.findById(productoClienteId.getProductoId()));
+        		mod.addAttribute("resultado", "Venta creada");
+        		productoClienteService.save(p);
+        		System.out.println("guarda");
+        	}
+        	else
+        	{
+        		System.out.println("exists if");
+        		mod.addAttribute("resultado", "El id ya existe");
+        	}
+        }
+        else
+        {
+        	model.setViewName("ventas/anyadir");
+        }
+        mod.addAttribute("titulo", "Añadir venta");
+		mod.addAttribute("clienteId", "Id cliente:");
+        mod.addAttribute("productoId", "Id producto:");
+		mod.addAttribute("fecha", "Fecha:");
+        return model;
+    }
+	
+	@GetMapping("/ventas/editar")
+	public String editarVenta(Model model)
+	{
+		model.addAttribute("titulo", "Añadir venta");
+		model.addAttribute("clienteId", "Id cliente:");
+        model.addAttribute("productoId", "Id producto:");
+		model.addAttribute("fecha", "Fecha:");
+		model.addAttribute("clienteId2", "");
+		model.addAttribute("productoId2", "");
+		model.addAttribute("fecha2", "");
+		model.addAttribute("productoClienteId", new ProductoClienteId());
+		return "ventas/editar";
+	}
+	
+	@RequestMapping("/ventas/editado")
+    public ModelAndView ventaEditada(
+    		@Valid ProductoClienteId productoClienteId,
+    		@RequestParam("clienteId2") Integer clienteId2,
+    		@RequestParam("productoId2") Integer productoId2,
+    		@RequestParam("fecha2") String fecha2,
+    		BindingResult result, Model mod) {
+        ModelAndView model = new ModelAndView();
+        model.addObject("productoClienteId", productoClienteId);
+        System.out.println(productoClienteId);
+        boolean found = false;
+        
+        ProductoCliente p = productoClienteService.findById(productoClienteId);
+        
+    	if(p != null)
+    	{
+    		System.out.println(p);
+    		found = true;
+    		
+    		if(!clienteId2.equals(""))
+    		{
+    			p.getId().setClienteId(clienteId2 + 0L);
+    			p.setCliente(clienteService.findById(clienteId2 + 0L));
+    		}
+    		
+    		if(!productoId2.equals(""))
+    		{
+    			p.getId().setProductoId(productoId2 + 0L);
+    			p.setProducto(productoService.findById(productoId2 + 0L));
+    		}
+    		
+    		if(fecha2 != null)
+    		{
+    			Date fechaParseada;
+				try {
+					fechaParseada = new SimpleDateFormat("yyyy-MM-dd").parse(fecha2);
+					p.getId().setFecha(fechaParseada);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    		
+    		productoClienteService.save(p);
+    	}
+        
+        model.setViewName("ready");
+        mod.addAttribute("titulo", "Editar venta");
+        if(found)
+        {
+        	mod.addAttribute("resultado", "Venta modificada");
+        }
+        else
+        {
+        	mod.addAttribute("resultado", "Venta no encontrada");
+        }
+        return model;
+    }
+	
+	@GetMapping("ventas/borrar")
+	public String borrarVenta(Model model)
+	{
+		model.addAttribute("productoClienteId", new ProductoClienteId());
+		model.addAttribute("titulo", "Borrar venta");
+		model.addAttribute("idCliente", "Id cliente:");
+		model.addAttribute("idProducto", "Id producto:");
+		model.addAttribute("fecha", "Fecha:");
+		return "/ventas/borrar";
+	}
+	
+	@RequestMapping("ventas/borrado")
+    public ModelAndView ventaBorrada(@Valid ProductoClienteId productoClienteId, BindingResult result, Model mod) {
+        ModelAndView model = new ModelAndView();
+        model.addObject("productoClienteId", productoClienteId);
+        boolean found = false;
+        
+        ProductoCliente p = productoClienteService.findById(productoClienteId);
+        
+    	if(p != null)
+    	{
+    		found = true;
+    		productoClienteService.delete(p.getId());
+    	}
+    	
+        model.setViewName("ready");
+        mod.addAttribute("titulo", "Borrar venta");
+        if(found)
+        {
+        	mod.addAttribute("resultado", "Venta borrada");
+        }
+        else
+        {
+        	mod.addAttribute("resultado", "Venta no encontrada");
         }
         return model;
     }

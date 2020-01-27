@@ -18,6 +18,8 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="productos")
 public class Producto implements Serializable {
@@ -44,6 +46,7 @@ public class Producto implements Serializable {
 	private boolean disponibilidad;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "producto")
+	@JsonIgnore
 	private Set<ProductoCliente> productosClientes = new HashSet<>(0);
 
 	public Long getCodProducto() {

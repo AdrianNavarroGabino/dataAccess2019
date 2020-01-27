@@ -5,6 +5,10 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Embeddable
 public class ProductoClienteId implements Serializable {
@@ -21,8 +25,22 @@ public class ProductoClienteId implements Serializable {
 	private Long productoId;
 	
 	@Column(name = "fecha", nullable = false, length = 13)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Temporal(TemporalType.DATE)
 	private Date fecha;
-
+	
+	public ProductoClienteId()
+	{
+		
+	}
+	
+	public ProductoClienteId(Long clienteId, Long productoId, Date fecha)
+	{
+		this.clienteId = clienteId;
+		this.productoId = productoId;
+		this.fecha = fecha;
+	}
+	
 	public Long getClienteId() {
 		return clienteId;
 	}
@@ -38,7 +56,7 @@ public class ProductoClienteId implements Serializable {
 	public void setProductoId(Long productoId) {
 		this.productoId = productoId;
 	}
-
+	
 	public Date getFecha() {
 		return fecha;
 	}
@@ -46,4 +64,11 @@ public class ProductoClienteId implements Serializable {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
+
+	@Override
+	public String toString() {
+		return "ProductoClienteId [clienteId=" + clienteId + ", productoId=" + productoId + ", fecha=" + fecha + "]";
+	}
+	
+	
 }
