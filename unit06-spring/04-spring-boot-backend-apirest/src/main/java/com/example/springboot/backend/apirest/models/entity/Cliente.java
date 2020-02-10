@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,16 +37,16 @@ public class Cliente implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotEmpty(message="no puede estar vacío")
-	@Size(min=4, max=12, message="el tamaño tiene que estar entre 4 y 12")
+	@NotEmpty(message="El nombre no puede estar vacío")
+	@Size(min=4, max=12, message="El tamaño del nombre tiene que estar entre 4 y 12")
 	@Column(nullable=false)
 	private String nombre;
 	
-	@NotEmpty(message="no puede estar vacío")
+	@NotEmpty(message="El apellido no puede estar vacío")
 	private String apellido;
 	
-	@NotEmpty(message="no puede estar vacío")
-	@Email(message="no es una dirección de correo bien formada")
+	@NotEmpty(message="El email no puede estar vacío")
+	@Email(message="El email no es una dirección de correo bien formada")
 	@Column(nullable=false, unique=true)
 	private String email;
 
@@ -57,6 +58,10 @@ public class Cliente implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cliente")
 	@JsonIgnore
 	private Set<ProductoCliente> productosClientes = new HashSet<>(0);
+	
+	@OneToOne(fetch = FetchType.LAZY,
+            mappedBy = "cliente")
+    private Usuario usuario;
 
 	public Long getId() {
 		return id;
@@ -104,6 +109,14 @@ public class Cliente implements Serializable {
 
 	public void setProductosClientes(Set<ProductoCliente> productosClientes) {
 		this.productosClientes = productosClientes;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	@Override

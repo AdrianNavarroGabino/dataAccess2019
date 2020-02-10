@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	<form th:action="@{/usuarios/editado}" method="post">
+		
+	    <fieldset>
+	        <legend>Datos del usuario</legend>
+	        <table>
+	        	<tr>
+	                <td><label th:text="${id}">Id: </label></td>
+	                <td><input type="number" name="id" /></td>
+	            </tr>
+	            <tr></tr>
+	            <tr>
+	                <td><label th:text="${nombreUsuario}">Nombre usuario: </label></td>
+	                <td><input type="text" name="nombreUsuario" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${idCliente}">Id Cliente: </label></td>
+	                <td><input type="number" name="idCliente" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${password}">Contraseña: </label></td>
+	                <td><input type="password" name="password" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Modificar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/usuarios}">Volver</a></p>
+</body>
+</html>

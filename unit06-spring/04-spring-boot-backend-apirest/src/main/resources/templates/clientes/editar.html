@@ -7,30 +7,30 @@
 <body>
 	<h1 th:text="${titulo}"></h1>
 	
-	<form th:action="@{/clientes/editado}" th:object="${cliente}" method="post">
+	<form th:action="@{/clientes/editado}" method="post">
 	    <fieldset>
 	        <legend>Datos del cliente</legend>
 	        <table>
 	        	<tr>
 	                <td><label th:text="${id}">Id: </label></td>
-	                <td><input type="number" th:field="*{id}" /></td>
+	                <td><input type="number" name="id" /></td>
 	            </tr>
 	            <tr></tr>
 	        	<tr>
 	                <td><label th:text="${nombre}">Nombre: </label></td>
-	                <td><input type="text" th:field="*{nombre}" /></td>
+	                <td><input type="text" name="nombre" /></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${apellido}">Apellido: </label></td>
-	                <td><input type="text" th:field="*{apellido}" /></td>
+	                <td><input type="text" name="apellido" /></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${email}">Correo: </label></td>
-	                <td><input type="text" th:field="*{email}" /></td>
+	                <td><input type="text" name="email" /></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${createAt}">Fecha de creación: </label></td>
-	                <td><input type="date" th:field="*{createAt}" /></td>
+	                <td><input type="date" name="createAt" /></td>
 	            </tr>
 	            <tr>
 	                <td>

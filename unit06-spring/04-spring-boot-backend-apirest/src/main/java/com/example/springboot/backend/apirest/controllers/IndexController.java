@@ -3,6 +3,7 @@ package com.example.springboot.backend.apirest.controllers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import com.example.springboot.backend.apirest.models.entity.Cliente;
+import com.example.springboot.backend.apirest.models.entity.Mail;
 import com.example.springboot.backend.apirest.models.entity.Producto;
 import com.example.springboot.backend.apirest.models.entity.ProductoCliente;
 import com.example.springboot.backend.apirest.models.entity.ProductoClienteId;
+import com.example.springboot.backend.apirest.models.entity.Usuario;
 import com.example.springboot.backend.apirest.models.services.ClienteServiceImpl;
+import com.example.springboot.backend.apirest.models.services.MailServiceImpl;
 import com.example.springboot.backend.apirest.models.services.ProductoClienteImpl;
 import com.example.springboot.backend.apirest.models.services.ProductoServiceImpl;
+import com.example.springboot.backend.apirest.models.services.UsuarioServiceImpl;
 
 @Controller
 public class IndexController {
@@ -32,6 +37,12 @@ public class IndexController {
 	
 	@Autowired
 	ProductoClienteImpl productoClienteService = new ProductoClienteImpl();
+	
+	@Autowired
+	UsuarioServiceImpl usuarioService = new UsuarioServiceImpl();
+	
+	@Autowired
+	MailServiceImpl mailService = new MailServiceImpl();
 	
 	@GetMapping({"/", "", "/index", "/home"})
 	public String index(Model model)
@@ -121,34 +132,45 @@ public class IndexController {
 	}
 	
 	@RequestMapping("/clientes/editado")
-    public ModelAndView clienteEditado(@Valid Cliente cliente, BindingResult result, Model mod) {
-        ModelAndView model = new ModelAndView();
-        model.addObject("cliente", cliente);
+    public ModelAndView clienteEditado(
+    		@RequestParam("id") Integer id,
+    		@RequestParam("nombre") String nombre,
+    		@RequestParam("apellido") String apellido,
+    		@RequestParam("email") String email,
+    		@RequestParam("createAt") String createAt,
+    		Model mod) {
         boolean found = false;
+        ModelAndView model = new ModelAndView();
         
-        Cliente c = clienteService.findById(cliente.getId());
+        Cliente c = clienteService.findById(id + 0L);
 
     	if(c != null)
     	{
     		found = true;
-    		if(!cliente.getNombre().equals(""))
+    		if(!nombre.equals(""))
     		{
-    			c.setNombre(cliente.getNombre());
+    			c.setNombre(nombre);
     		}
     		
-    		if(!cliente.getEmail().equals(""))
+    		if(!email.equals(""))
     		{
-    			c.setEmail(cliente.getEmail());
+    			c.setEmail(email);
     		}
     		
-    		if(!cliente.getApellido().equals(""))
+    		if(!apellido.equals(""))
     		{
-    			c.setApellido(cliente.getApellido());
+    			c.setApellido(apellido);
     		}
     		
-    		if(cliente.getCreateAt() != null)
+    		if(!createAt.equals(""))
     		{
-    			c.setCreateAt(cliente.getCreateAt());
+    			Date fechaParseada;
+				try {
+					fechaParseada = new SimpleDateFormat("yyyy-MM-dd").parse(createAt);
+					c.setCreateAt(fechaParseada);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
     		}
     		
     		clienteService.save(c);
@@ -181,25 +203,43 @@ public class IndexController {
         ModelAndView model = new ModelAndView();
         model.addObject("cliente", cliente);
         boolean found = false;
+        boolean enVentas = false;
         
-        for(Cliente c: clienteService.findAll())
+        List<ProductoCliente> pc = productoClienteService.findAll();
+        
+        for(ProductoCliente venta: pc)
         {
-        	if(c.getId() == cliente.getId())
+        	if(venta.getCliente().getId() == cliente.getId())
         	{
-        		found = true;
-        		clienteService.delete(c.getId());
-        		break;
+        		enVentas = true;
+        		model.setViewName("ready");
+                mod.addAttribute("titulo", "Borrar cliente");
+                mod.addAttribute("resultado", "No se puede borrar a un cliente con ventas");
+                break;
         	}
         }
-        model.setViewName("ready");
-        mod.addAttribute("titulo", "Borrar cliente");
-        if(found)
+        
+        if(!enVentas)
         {
-        	mod.addAttribute("resultado", "Cliente borrado");
-        }
-        else
-        {
-        	mod.addAttribute("resultado", "Cliente no encontrado");
+	        for(Cliente c: clienteService.findAll())
+	        {
+	        	if(c.getId() == cliente.getId())
+	        	{
+	        		found = true;
+	        		clienteService.delete(c.getId());
+	        		break;
+	        	}
+	        }
+	        model.setViewName("ready");
+	        mod.addAttribute("titulo", "Borrar cliente");
+	        if(found)
+	        {
+	        	mod.addAttribute("resultado", "Cliente borrado");
+	        }
+	        else
+	        {
+	        	mod.addAttribute("resultado", "Cliente no encontrado");
+	        }
         }
         return model;
     }
@@ -286,32 +326,43 @@ public class IndexController {
 	}
 	
 	@RequestMapping("/productos/editado")
-    public ModelAndView productoEditado(@Valid Producto producto, BindingResult result, Model mod) {
-        ModelAndView model = new ModelAndView();
-        model.addObject("producto", producto);
+    public ModelAndView productoEditado(
+    		@RequestParam("codProducto") Integer codProducto,
+    		@RequestParam("descripcion") String descripcion,
+    		@RequestParam("precio") Double precio,
+    		@RequestParam("fechaAlta") String fechaAlta,
+    		@RequestParam(value="dispCheck", defaultValue="noDisponible") String disponibilidad,
+    		Model mod) {
+		ModelAndView model = new ModelAndView();
         boolean found = false;
-        
-        Producto p = productoService.findById(producto.getCodProducto());
+        System.out.println(disponibilidad);
+        Producto p = productoService.findById(codProducto + 0L);
         
     	if(p != null)
     	{
     		found = true;
-    		if(!producto.getDescripcion().equals(""))
+    		if(!descripcion.equals(""))
     		{
-    			p.setDescripcion(producto.getDescripcion());
+    			p.setDescripcion(descripcion);
     		}
     		
-    		if(producto.getPrecio() != 0)
+    		if(precio != 0)
     		{
-    			p.setPrecio(producto.getPrecio());
+    			p.setPrecio(precio);
     		}
     		
-    		if(producto.getFechaAlta() != null)
+    		if(!fechaAlta.equals(""))
     		{
-    			p.setFechaAlta(producto.getFechaAlta());
+    			Date fechaParseada;
+				try {
+					fechaParseada = new SimpleDateFormat("yyyy-MM-dd").parse(fechaAlta);
+					p.setFechaAlta(fechaParseada);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
     		}
     		
-    		p.setDisponibilidad(producto.isDisponibilidad());
+    		p.setDisponibilidad(disponibilidad.equals("disponible"));
     		
     		productoService.save(p);
     	}
@@ -343,25 +394,43 @@ public class IndexController {
         ModelAndView model = new ModelAndView();
         model.addObject("producto", producto);
         boolean found = false;
+        boolean enVentas = false;
         
-        for(Producto p: productoService.findAll())
+        List<ProductoCliente> pc = productoClienteService.findAll();
+        
+        for(ProductoCliente venta: pc)
         {
-        	if(p.getCodProducto() == producto.getCodProducto())
+        	if(venta.getCliente().getId() == producto.getCodProducto())
         	{
-        		found = true;
-        		productoService.delete(p.getCodProducto());
-        		break;
+        		enVentas = true;
+        		model.setViewName("ready");
+                mod.addAttribute("titulo", "Borrar producto");
+                mod.addAttribute("resultado", "No se puede borrar un producto con ventas");
+                break;
         	}
         }
-        model.setViewName("ready");
-        mod.addAttribute("titulo", "Borrar producto");
-        if(found)
+        
+        if(!enVentas)
         {
-        	mod.addAttribute("resultado", "Producto borrado");
-        }
-        else
-        {
-        	mod.addAttribute("resultado", "Producto no encontrado");
+	        for(Producto p: productoService.findAll())
+	        {
+	        	if(p.getCodProducto() == producto.getCodProducto())
+	        	{
+	        		found = true;
+	        		productoService.delete(p.getCodProducto());
+	        		break;
+	        	}
+	        }
+	        model.setViewName("ready");
+	        mod.addAttribute("titulo", "Borrar producto");
+	        if(found)
+	        {
+	        	mod.addAttribute("resultado", "Producto borrado");
+	        }
+	        else
+	        {
+	        	mod.addAttribute("resultado", "Producto no encontrado");
+	        }
         }
         return model;
     }
@@ -463,41 +532,55 @@ public class IndexController {
     		BindingResult result, Model mod) {
         ModelAndView model = new ModelAndView();
         model.addObject("productoClienteId", productoClienteId);
-        System.out.println(productoClienteId);
         boolean found = false;
         
         ProductoCliente p = productoClienteService.findById(productoClienteId);
+        ProductoClienteId pId = new ProductoClienteId();
         
     	if(p != null)
     	{
-    		System.out.println(p);
     		found = true;
     		
-    		if(!clienteId2.equals(""))
+    		if(clienteId2 != 0)
     		{
-    			p.getId().setClienteId(clienteId2 + 0L);
-    			p.setCliente(clienteService.findById(clienteId2 + 0L));
+    			pId.setClienteId(clienteId2 + 0L);
+    		}
+    		else
+    		{
+    			pId.setClienteId(p.getCliente().getId());
     		}
     		
-    		if(!productoId2.equals(""))
+    		if(productoId2 != 0)
     		{
-    			p.getId().setProductoId(productoId2 + 0L);
-    			p.setProducto(productoService.findById(productoId2 + 0L));
+    			pId.setProductoId(productoId2 + 0L);
+    		}
+    		else
+    		{
+    			pId.setProductoId(p.getProducto().getCodProducto());
     		}
     		
-    		if(fecha2 != null)
+    		if(!fecha2.equals(""))
     		{
     			Date fechaParseada;
 				try {
 					fechaParseada = new SimpleDateFormat("yyyy-MM-dd").parse(fecha2);
-					p.getId().setFecha(fechaParseada);
+					pId.setFecha(fechaParseada);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
     		}
+    		else
+    		{
+    			pId.setFecha(p.getFecha());
+    		}
     		
-    		productoClienteService.save(p);
+    		ProductoCliente pUpdated = new ProductoCliente();
+    		pUpdated.setId(pId);
+    		pUpdated.setCliente(clienteService.findById(pId.getClienteId()));
+    		pUpdated.setProducto(productoService.findById(pId.getProductoId()));
+    		
+    		productoClienteService.delete(productoClienteId);
+    		productoClienteService.save(pUpdated);
     	}
         
         model.setViewName("ready");
@@ -548,6 +631,241 @@ public class IndexController {
         {
         	mod.addAttribute("resultado", "Venta no encontrada");
         }
+        return model;
+    }
+
+	@GetMapping("/usuarios")
+	public String indexUsuarios(Model model)
+	{
+		model.addAttribute("titulo", "Usuarios");
+		return "usuarios/index";
+	}
+	
+	@GetMapping("/usuarios/listar")
+	public String listarUsuarios(Model model)
+	{
+		model.addAttribute("titulo", "Listar usuarios");
+		model.addAttribute("usuarios", usuarioService.findAll());
+		return "usuarios/listar";
+	}
+	
+	@GetMapping("/usuarios/anyadir")
+	public String addUsuario(Model model)
+	{
+		model.addAttribute("titulo", "Añadir usuario");
+		model.addAttribute("idCliente", "Id cliente:");
+        model.addAttribute("nombreUsuario", "Usuario:");
+		model.addAttribute("password", "Contraseña:");
+		model.addAttribute("email", "Email:");
+		model.addAttribute("objetoUsuario", new Usuario());
+		return "usuarios/anyadir";
+	}
+	
+	@RequestMapping("/usuarios/create")
+    public ModelAndView createUsuario(
+    		@Valid Usuario objetoUsuario,
+    		@RequestParam("idCliente") long idCliente,
+    		BindingResult result, Model mod) {
+        ModelAndView model = new ModelAndView();
+        boolean exists = false;
+        boolean mailExists = false;
+        model.addObject("objetoUsuario", objetoUsuario);
+        
+        if(!result.hasErrors())
+        {
+        	Cliente c = clienteService.findById(idCliente);
+        	
+        	if(c != null)
+        	{
+        		objetoUsuario.setCliente(c);
+	        	for(Usuario u: usuarioService.findAll())
+	        	{
+	        		if(u.getCliente() == objetoUsuario.getCliente() || u.getNombreUsuario().equals(objetoUsuario.getNombreUsuario()))
+	        		{
+	        			exists = true;
+	        			break;
+	        		}
+	        	}
+	        	
+	        	for(Mail m: mailService.findAll())
+	    		{
+	    			if(m.getEmail().equals(objetoUsuario.getEmail()))
+	    			{
+	    				mailExists = true;
+	    				break;
+	    			}
+	    		}
+	        	
+	        	model.setViewName("ready");
+	        	
+	        	if(!exists && !mailExists)
+	        	{
+	        		mod.addAttribute("resultado", "Usuario creado");
+	        		usuarioService.save(objetoUsuario);
+	        	}
+	        	else if(exists)
+	        	{
+	        		mod.addAttribute("resultado", "El id ya existe");
+	        	}
+	        	else
+	        	{
+	        		mod.addAttribute("resultado", "El mail ya existe");
+	        	}
+        	}
+        	else
+        	{
+        		mod.addAttribute("resultado", "El cliente no existe");
+        	}
+        }
+        else
+        {
+        	model.setViewName("usuarios/anyadir");
+        }
+        mod.addAttribute("titulo", "Añadir usuario");
+		mod.addAttribute("idCliente", "Id cliente:");
+        mod.addAttribute("nombreUsuario", "Usuario:");
+		mod.addAttribute("password", "Contraseña:");
+		mod.addAttribute("email", "Email:");
+        return model;
+    }
+	
+	@GetMapping("/usuarios/editar")
+	public String editarUsuario(Model model)
+	{
+		model.addAttribute("titulo", "Editar usuario");
+		model.addAttribute("id", "Id para modificar:");
+		model.addAttribute("nombreUsuario", "Nombre usuario:");
+        model.addAttribute("idCliente", "Id cliente:");
+		model.addAttribute("password", "Contraseña:");
+		return "usuarios/editar";
+	}
+	
+	@RequestMapping("/usuario/editado")
+    public ModelAndView productoEditado(
+    		@RequestParam("id") Long id,
+    		@RequestParam("nombreUsuario") String nombreUsuario,
+    		@RequestParam("idCliente") Long idCliente,
+    		@RequestParam("password") String password,
+    		Model mod) {
+		ModelAndView model = new ModelAndView();
+        boolean found = false;
+        Usuario u = usuarioService.findById(id);
+        
+    	if(u != null)
+    	{
+    		found = true;
+    		if(!nombreUsuario.equals(""))
+    		{
+    			u.setNombreUsuario(nombreUsuario);
+    		}
+    		
+    		if(idCliente != 0)
+    		{
+    			u.setCliente(clienteService.findById(idCliente));
+    		}
+    		
+    		if(!password.equals(""))
+    		{
+    			u.setPassword(password);
+    		}
+    		
+    		usuarioService.save(u);
+    	}
+        
+        model.setViewName("ready");
+        mod.addAttribute("titulo", "Editar usuario");
+        if(found)
+        {
+        	mod.addAttribute("resultado", "Usuario modificado");
+        }
+        else
+        {
+        	mod.addAttribute("resultado", "Usuario no encontrado");
+        }
+        return model;
+    }
+	
+	@GetMapping("usuarios/borrar")
+	public String borrarUsuario(Model model)
+	{
+		model.addAttribute("usuario", new Usuario());
+		model.addAttribute("titulo", "Borrar usuario");
+		model.addAttribute("id", "Id usuario:");
+		return "/usuarios/borrar";
+	}
+	
+	@RequestMapping("usuarios/borrado")
+    public ModelAndView usuarioBorrado(@Valid Usuario usuario, BindingResult result, Model mod) {
+        ModelAndView model = new ModelAndView();
+        model.addObject("usuario", usuario);
+        
+        Usuario u = usuarioService.findById(usuario.getId());
+	        
+        model.setViewName("ready");
+        mod.addAttribute("titulo", "Borrar producto");
+        
+        if(u != null)
+        {
+    		usuarioService.delete(usuario.getId());
+    		mod.addAttribute("resultado", "Usuario borrado");
+        }
+        else
+        {
+        	mod.addAttribute("resultado", "Usuario no encontrado");
+        }
+        
+        return model;
+    }
+	
+	@GetMapping("/mails")
+	public String indexMails(Model model)
+	{
+		model.addAttribute("titulo", "Mail");
+		return "mails/index";
+	}
+	
+	@GetMapping("/mails/anyadir")
+	public String addMail(Model model)
+	{
+		model.addAttribute("titulo", "Añadir mail");
+		model.addAttribute("email", "Mail:");
+        model.addAttribute("usuarioId", "Id usuario:");
+		model.addAttribute("mail", new Mail());
+		return "mails/anyadir";
+	}
+	
+	@RequestMapping("/mails/create")
+    public ModelAndView createMail(@Valid Mail mail, BindingResult result, Model mod) {
+        ModelAndView model = new ModelAndView();
+        boolean exists = false;
+        model.addObject("mail", mail);
+        
+        if(!result.hasErrors())
+        {
+        	Mail m = mailService.findById(mail.getId());
+        	
+        	if(m != null)
+    			exists = true;
+        	
+        	model.setViewName("ready");
+        	
+        	if(!exists)
+        	{
+        		mailService.save(mail);
+        		mod.addAttribute("resultado", "Mail creado");
+        	}
+        	else
+        	{
+        		mod.addAttribute("resultado", "El mail ya existe");
+        	}
+        }
+        else
+        {
+        	model.setViewName("mails/anyadir");
+        }
+        mod.addAttribute("titulo", "Añadir mail");
+		mod.addAttribute("email", "Mail:");
+        mod.addAttribute("usuarioId", "Id usuario:");
         return model;
     }
 }

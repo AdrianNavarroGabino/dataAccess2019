@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	
+	<ul>
+		<li><a th:href="@{/mails/anyadir}">Añadir</a></li>
+		<li><a th:href="@{/mails/editar}">Modificar</a></li>
+		<li><a th:href="@{/mails/borrar}">Borrar</a></li>
+	</ul>
+	
+	<p><a th:href="@{/}">Volver</a></p>
+</body>
+</html>

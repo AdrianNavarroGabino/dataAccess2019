@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	<form th:action="@{/mails/create}" th:object="${mail}" method="post">
+		<div class="errorblock" th:if="${#fields.hasErrors('*')}">
+	        <ul>
+	            <li th:each="err : ${#fields.errors('*')}"
+	                th:text="${err}">Input is incorrect</li>
+	        </ul>
+	    </div>
+	    <fieldset>
+	        <legend>Datos del cliente</legend>
+	        <table>
+	            <tr>
+	                <td><label th:text="${email}">Mail: </label></td>
+	                <td><input type="text" th:field="*{email}" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${usuarioId}">Id usuario: </label></td>
+	                <td><input type="number" th:field="*{usuario}" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Registrar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/mails}">Volver</a></p>
+</body>
+</html>

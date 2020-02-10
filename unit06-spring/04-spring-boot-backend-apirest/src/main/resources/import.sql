@@ -15,3 +15,6 @@ INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (1, 1, '2
 INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (3, 4, '2019-12-21');
 INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (1, 3, '2020-01-01');
 INSERT INTO productos_clientes (cliente_id, producto_id, fecha) VALUES (2, 2, '2019-02-01');
+INSERT INTO usuarios (usuario, password, id_cliente) VALUES ('usuPrueba', '123456', 1);
+INSERT INTO mails (mail, id_usuario) VALUES ('prueba@prueba.com', 1);
+INSERT INTO mails (mail, id_usuario) VALUES ('prueba2@prueba.com', 1);
