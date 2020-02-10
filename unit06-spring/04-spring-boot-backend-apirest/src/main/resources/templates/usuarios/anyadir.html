@@ -18,19 +18,19 @@
 	        <table>
 	            <tr>
 	                <td><label th:text="${idCliente}">Id del cliente: </label></td>
-	                <td><input type="number" name="idCliente" /></td>
+	                <td><input type="number" name="idCliente" required/></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${nombreUsuario}">Usuario: </label></td>
-	                <td><input type="text" th:field="*{nombreUsuario}" /></td>
+	                <td><input type="text" th:field="*{nombreUsuario}" minlength="4" maxlength="12" required/></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${password}">Contraseña: </label></td>
-	                <td><input type="password" th:field="*{password}" /></td>
+	                <td><input type="password" th:field="*{password}" minlength="6" required/></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${email}">Correo: </label></td>
-	                <td><input type="text" th:field="*{email}" /></td>
+	                <td><input type="email" th:field="*{email}" required /></td>
 	            </tr>
 	            <tr>
 	                <td>

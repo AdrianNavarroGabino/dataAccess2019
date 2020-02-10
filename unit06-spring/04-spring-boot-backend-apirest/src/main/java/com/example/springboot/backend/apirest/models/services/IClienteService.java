@@ -12,4 +12,8 @@ public interface IClienteService {
 	public Cliente findById(Long id);
 	
 	public void delete(Long id);
+	
+	public List<Cliente> filtrar(String buscar);
+	
+	public List<Cliente> findClientesSinUsuario();
 }

@@ -66,6 +66,40 @@ public class IndexController {
 		return "clientes/listar";
 	}
 	
+	@GetMapping("/clientes/listarclientesusuarios")
+	public String listarClientes2(Model model)
+	{
+		model.addAttribute("titulo", "Listar clientes");
+		model.addAttribute("clientes", clienteService.findAll());
+		return "clientes/listar2";
+	}
+	
+	@GetMapping("/clientes/filtrar")
+	public String listarClientes3(Model model)
+	{
+		model.addAttribute("titulo", "Listar clientes");
+		model.addAttribute("buscar", "Buscar:");
+		model.addAttribute("clientes", clienteService.findAll());
+		return "clientes/listar3";
+	}
+	
+	@RequestMapping("/clientes/filtrar")
+	public String listarClientes3Aux(Model model, @RequestParam("buscar") String buscar)
+	{
+		model.addAttribute("titulo", "Listar clientes");
+		model.addAttribute("buscar", "Buscar:");
+		model.addAttribute("clientes", clienteService.filtrar(buscar));
+		return "clientes/listar3";
+	}
+	
+	@GetMapping("/clientes/listarsinusu")
+	public String listarClientesSinUsuario(Model model)
+	{
+		model.addAttribute("titulo", "Listar clientes sin usuario");
+		model.addAttribute("clientes", clienteService.findClientesSinUsuario());
+		return "clientes/listarsinusu";
+	}
+	
 	@GetMapping("/clientes/anyadir")
 	public String addCliente(Model model)
 	{
@@ -740,7 +774,7 @@ public class IndexController {
 		return "usuarios/editar";
 	}
 	
-	@RequestMapping("/usuario/editado")
+	@RequestMapping("/usuarios/editado")
     public ModelAndView productoEditado(
     		@RequestParam("id") Long id,
     		@RequestParam("nombreUsuario") String nombreUsuario,
@@ -866,6 +900,87 @@ public class IndexController {
         mod.addAttribute("titulo", "Añadir mail");
 		mod.addAttribute("email", "Mail:");
         mod.addAttribute("usuarioId", "Id usuario:");
+        return model;
+    }
+	
+	@GetMapping("/mails/editar")
+	public String editarMail(Model model)
+	{
+		model.addAttribute("titulo", "Editar mail");
+		model.addAttribute("id", "Id para modificar:");
+		model.addAttribute("email", "Email:");
+        model.addAttribute("idUsuario", "Id usuario:");
+		return "mails/editar";
+	}
+	
+	@RequestMapping("/mails/editado")
+    public ModelAndView mailEditado(
+    		@RequestParam("id") Long id,
+    		@RequestParam("email") String email,
+    		@RequestParam("idUsuario") Long idUsuario,
+    		Model mod) {
+		ModelAndView model = new ModelAndView();
+        boolean found = false;
+        Mail m = mailService.findById(id);
+        
+    	if(m != null)
+    	{
+    		found = true;
+    		if(!email.equals(""))
+    		{
+    			m.setEmail(email);
+    		}
+    		
+    		if(idUsuario != 0)
+    		{
+    			m.setUsuario(usuarioService.findById(idUsuario));
+    		}
+    		
+    		mailService.save(m);
+    	}
+        
+        model.setViewName("ready");
+        mod.addAttribute("titulo", "Editar mail");
+        if(found)
+        {
+        	mod.addAttribute("resultado", "Mail modificado");
+        }
+        else
+        {
+        	mod.addAttribute("resultado", "Mail no encontrado");
+        }
+        return model;
+    }
+	
+	@GetMapping("mails/borrar")
+	public String borrarMail(Model model)
+	{
+		model.addAttribute("mail", new Mail());
+		model.addAttribute("titulo", "Borrar mail");
+		model.addAttribute("id", "Id mail:");
+		return "/mails/borrar";
+	}
+	
+	@RequestMapping("mails/borrado")
+    public ModelAndView mailBorrado(@Valid Mail mail, BindingResult result, Model mod) {
+        ModelAndView model = new ModelAndView();
+        model.addObject("mail", mail);
+        
+        Mail m = mailService.findById(mail.getId());
+	        
+        model.setViewName("ready");
+        mod.addAttribute("titulo", "Borrar mail");
+        
+        if(m != null)
+        {
+    		mailService.delete(mail.getId());
+    		mod.addAttribute("resultado", "Mail borrado");
+        }
+        else
+        {
+        	mod.addAttribute("resultado", "Mail no encontrado");
+        }
+        
         return model;
     }
 }

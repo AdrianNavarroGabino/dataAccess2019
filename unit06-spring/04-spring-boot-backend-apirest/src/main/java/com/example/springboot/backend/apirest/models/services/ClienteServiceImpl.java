@@ -39,4 +39,16 @@ public class ClienteServiceImpl implements IClienteService {
 		clienteDao.deleteById(id);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cliente> filtrar(String buscar)
+	{
+		return (List<Cliente>) clienteDao.filtrar(buscar.toUpperCase());
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cliente> findClientesSinUsuario() {
+		return (List<Cliente>) clienteDao.findClientesSinUsuario();
+	}
 }

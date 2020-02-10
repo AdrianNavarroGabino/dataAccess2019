@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	<form th:action="@{/mails/editado}" method="post">
+		
+	    <fieldset>
+	        <legend>Datos del Mail</legend>
+	        <table>
+	        	<tr>
+	                <td><label th:text="${id}">Id para modificar: </label></td>
+	                <td><input type="number" name="id" /></td>
+	            </tr>
+	            <tr></tr>
+	            <tr>
+	                <td><label th:text="${email}">Email: </label></td>
+	                <td><input type="text" name="email" /></td>
+	            </tr>
+	            <tr>
+	                <td><label th:text="${idUsuario}">Id usuario: </label></td>
+	                <td><input type="number" name="idUsuario" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Modificar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/mails}">Volver</a></p>
+</body>
+</html>

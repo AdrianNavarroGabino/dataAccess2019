@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	
+	<form th:action="@{/clientes/filtrar}" method="post">
+		
+        <table>
+        	<tr>
+                <td><label th:text="${buscar}">Buscar: </label></td>
+                <td><input type="text" name="buscar" /></td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit">Filtrar</button>
+                </td>
+            </tr>
+        </table>
+	</form>
+	
+	<ul th:if="${not clientes.isEmpty()}">
+		<li th:each="cl: ${clientes}">
+			<span>Cliente: </span>
+			<span th:text="${cl.nombre}"></span>
+			<span> </span>
+			<span th:text="${cl.apellido}"></span>
+			<span> - Mail: </span>
+			<span th:text="${cl.email}"></span>
+			<span> - </span>
+			<span th:text="${cl.createAt}"></span>
+			<br/>
+			<ul th:if="${cl.usuario != null}">
+				<li>
+					<span>Usuario: </span>
+					<span th:text="${cl.usuario.nombreUsuario}"></span>
+					<span>. Mails: </span>
+					<span th:each="m: ${cl.usuario.mails}">
+						<span th:text="${m.email}"></span>
+						<span> </span>
+					</span>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	
+	<p><a th:href="@{/clientes}">Volver</a></p>
+</body>
+</html>

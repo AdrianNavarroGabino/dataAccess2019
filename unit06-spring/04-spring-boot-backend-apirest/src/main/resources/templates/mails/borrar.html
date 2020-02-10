@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	<form th:action="@{/mails/borrado}" th:object="${mail}" method="post">
+		<div class="errorblock" th:if="${#fields.hasErrors('*')}">
+	        <ul>
+	            <li th:each="err : ${#fields.errors('*')}"
+	                th:text="${err}">Input is incorrect</li>
+	        </ul>
+	    </div>
+	    <fieldset>
+	        <legend>Datos del mail</legend>
+	        <table>
+	            <tr>
+	                <td><label th:text="${id}">Id mail: </label></td>
+	                <td><input type="number" th:field="*{id}" /></td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <button type="submit">Borrar</button>
+	                </td>
+	            </tr>
+	        </table>
+	    </fieldset>
+	</form>
+	
+	<p><a th:href="@{/mails}">Volver</a></p>
+</body>
+</html>

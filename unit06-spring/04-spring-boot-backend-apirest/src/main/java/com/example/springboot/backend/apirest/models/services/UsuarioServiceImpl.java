@@ -45,6 +45,15 @@ public class UsuarioServiceImpl implements IUsuarioService {
 	@Override
 	@Transactional
 	public void delete(Long id) {
-		usuarioDao.deleteById(id);
+		Usuario u = usuarioDao.findById(id).orElse(null);
+		
+		if(u != null)
+		{
+			for(Mail m: u.getMails())
+			{
+				mailDao.delete(m);
+			}
+			usuarioDao.deleteById(id);
+		}
 	}
 }
