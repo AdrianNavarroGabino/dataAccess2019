@@ -884,11 +884,14 @@ public class IndexController {
         
         if(!result.hasErrors())
         {
-        	Mail m = mailService.findById(mail.getId());
-        	
-        	if(m != null)
-    			exists = true;
-        	
+        	for(Mail m: mailService.findAll())
+        	{
+        		if(m.getEmail() == mail.getEmail())
+        		{
+        			exists = true;
+        			break;
+        		}
+        	}
         	model.setViewName("ready");
         	
         	if(!exists)
