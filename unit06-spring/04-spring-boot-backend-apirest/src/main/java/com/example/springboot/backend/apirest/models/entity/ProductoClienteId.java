@@ -69,6 +69,4 @@ public class ProductoClienteId implements Serializable {
 	public String toString() {
 		return "ProductoClienteId [clienteId=" + clienteId + ", productoId=" + productoId + ", fecha=" + fecha + "]";
 	}
-	
-	
 }

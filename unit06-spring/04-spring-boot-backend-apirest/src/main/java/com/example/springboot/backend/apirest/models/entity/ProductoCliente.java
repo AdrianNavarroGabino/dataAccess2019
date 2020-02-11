@@ -80,6 +80,4 @@ public class ProductoCliente {
 	public String toString() {
 		return "ProductoCliente [id=" + id + ", cliente=" + cliente + ", producto=" + producto + "]";
 	}
-	
-	
 }

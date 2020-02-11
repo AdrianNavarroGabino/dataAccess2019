@@ -18,11 +18,11 @@
 	        <table>
 	            <tr>
 	                <td><label th:text="${email}">Mail: </label></td>
-	                <td><input type="text" th:field="*{email}" /></td>
+	                <td><input type="email" th:field="*{email}" required/></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${usuarioId}">Id usuario: </label></td>
-	                <td><input type="number" th:field="*{usuario}" /></td>
+	                <td><input type="number" value="0" th:field="*{usuario}" required/></td>
 	            </tr>
 	            <tr>
 	                <td>

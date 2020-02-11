@@ -9,13 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface IClienteDAO extends JpaRepository<Cliente, Long> {
-	@Query(value="SELECT * FROM clientes " + 
-	          "EXCEPT " + 
-	          "SELECT cl.* FROM clientes cl, usuarios usu WHERE cl.id = usu.id_cliente;",
+	@Query(value="SELECT * FROM clientes WHERE id NOT IN " + 
+	          "(SELECT clientes.id FROM clientes, usuarios WHERE clientes.id = id_cliente);",
 	          nativeQuery=true)
-	List<Cliente> findClientesSinUsuario();
+	List<Cliente> clientesSinUsuario();
 	
-	@Query(value= "SELECT cl.* FROM clientes cl WHERE UPPER(cl.nombre) LIKE '%'|| :buscar ||'%';",
+	@Query(value= "SELECT * FROM clientes WHERE UPPER(nombre) LIKE '%'|| :buscar ||'%';",
 	          nativeQuery=true)
-	  List<Cliente> filtrar(@Param("buscar") String buscar);
+	List<Cliente> filtrar(@Param("buscar") String buscar);
+	
+	@Query(value= "SELECT * FROM clientes WHERE clientes.id IN " +
+			"(SELECT id_cliente from usuarios);",
+	          nativeQuery=true)
+	List<Cliente> clientesConUsuarios();
 }

@@ -18,15 +18,15 @@
 	        <table>
 	            <tr>
 	                <td><label th:text="${clienteId}">Id cliente: </label></td>
-	                <td><input type="number" value="0" th:field="*{clienteId}" /></td>
+	                <td><input type="number" value="0" th:field="*{clienteId}" required /></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${productoId}">Id producto: </label></td>
-	                <td><input type="number" value="0" th:field="*{productoId}" /></td>
+	                <td><input type="number" value="0" th:field="*{productoId}" required /></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${fecha}">Fecha: </label></td>
-	                <td><input type="date" th:field="*{fecha}" /></td>
+	                <td><input type="date" th:field="*{fecha}" required /></td>
 	            </tr>
 	            <tr>
 	                <td><label th:text="${clienteId}">Id cliente: </label></td>

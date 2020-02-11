@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"></link>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	
+	<ul th:if="${not clientes.isEmpty()}">
+		<li th:each="cl: ${clientes}">
+			<span>Usuario: </span>
+			<span th:text="${cl.usuario.nombreUsuario}"></span>
+			<span>. Cliente: </span>
+			<span th:text="${cl.nombre}"></span>
+			<span> </span>
+			<span th:text="${cl.apellido}"></span>
+			<span>. Mails: </span>
+			<span th:each="m: ${cl.usuario.mails}">
+				<span th:text="${m.email}"></span>
+				<span> </span>
+			</span>
+			<br/>
+			<ul th:if="${not cl.productosClientes.isEmpty()}">
+				<li th:each="p: ${cl.productosClientes}">
+					<span th:text="${p.producto.descripcion}"></span>
+					<span> - </span>
+					<span th:text="${p.id.fecha}"></span>
+				</li>
+			</ul>
+			<ul th:if="${cl.productosClientes.isEmpty()}">
+				<li>El usuario no tiene productos</li>
+			</ul>
+		</li>
+	</ul>
+	
+	<p><a th:href="@{/usuarios}">Volver</a></p>
+</body>
+</html>

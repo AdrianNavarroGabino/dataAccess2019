@@ -15,5 +15,7 @@ public interface IClienteService {
 	
 	public List<Cliente> filtrar(String buscar);
 	
-	public List<Cliente> findClientesSinUsuario();
+	public List<Cliente> clientesSinUsuario();
+	
+	public List<Cliente> clientesConUsuarios();
 }

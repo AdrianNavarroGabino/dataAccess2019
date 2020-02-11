@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.example.springboot.backend.apirest.models.dao.IClienteDAO;
 import com.example.springboot.backend.apirest.models.entity.Cliente;
 
@@ -14,6 +13,9 @@ public class ClienteServiceImpl implements IClienteService {
 	
 	@Autowired
 	private IClienteDAO clienteDao;
+	
+	@Autowired
+	private IUsuarioService usuarioService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -36,6 +38,10 @@ public class ClienteServiceImpl implements IClienteService {
 	@Override
 	@Transactional
 	public void delete(Long id) {
+		if(findById(id).getUsuario() != null)
+		{
+			usuarioService.delete(findById(id).getUsuario().getId());
+		}
 		clienteDao.deleteById(id);
 	}
 
@@ -48,7 +54,13 @@ public class ClienteServiceImpl implements IClienteService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<Cliente> findClientesSinUsuario() {
-		return (List<Cliente>) clienteDao.findClientesSinUsuario();
+	public List<Cliente> clientesSinUsuario() {
+		return (List<Cliente>) clienteDao.clientesSinUsuario();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Cliente> clientesConUsuarios() {
+		return (List<Cliente>) clienteDao.clientesConUsuarios();
 	}
 }

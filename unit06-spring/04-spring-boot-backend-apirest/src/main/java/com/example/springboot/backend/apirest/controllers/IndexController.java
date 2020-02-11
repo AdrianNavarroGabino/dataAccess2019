@@ -69,7 +69,7 @@ public class IndexController {
 	@GetMapping("/clientes/listarclientesusuarios")
 	public String listarClientes2(Model model)
 	{
-		model.addAttribute("titulo", "Listar clientes");
+		model.addAttribute("titulo", "Listar clientes y usuarios");
 		model.addAttribute("clientes", clienteService.findAll());
 		return "clientes/listar2";
 	}
@@ -77,7 +77,7 @@ public class IndexController {
 	@GetMapping("/clientes/filtrar")
 	public String listarClientes3(Model model)
 	{
-		model.addAttribute("titulo", "Listar clientes");
+		model.addAttribute("titulo", "Listar clientes filtrados");
 		model.addAttribute("buscar", "Buscar:");
 		model.addAttribute("clientes", clienteService.findAll());
 		return "clientes/listar3";
@@ -86,7 +86,7 @@ public class IndexController {
 	@RequestMapping("/clientes/filtrar")
 	public String listarClientes3Aux(Model model, @RequestParam("buscar") String buscar)
 	{
-		model.addAttribute("titulo", "Listar clientes");
+		model.addAttribute("titulo", "Listar clientes filtrados");
 		model.addAttribute("buscar", "Buscar:");
 		model.addAttribute("clientes", clienteService.filtrar(buscar));
 		return "clientes/listar3";
@@ -96,7 +96,7 @@ public class IndexController {
 	public String listarClientesSinUsuario(Model model)
 	{
 		model.addAttribute("titulo", "Listar clientes sin usuario");
-		model.addAttribute("clientes", clienteService.findClientesSinUsuario());
+		model.addAttribute("clientes", clienteService.clientesSinUsuario());
 		return "clientes/listarsinusu";
 	}
 	
@@ -546,7 +546,7 @@ public class IndexController {
 	@GetMapping("/ventas/editar")
 	public String editarVenta(Model model)
 	{
-		model.addAttribute("titulo", "Añadir venta");
+		model.addAttribute("titulo", "Editar venta");
 		model.addAttribute("clienteId", "Id cliente:");
         model.addAttribute("productoId", "Id producto:");
 		model.addAttribute("fecha", "Fecha:");
@@ -635,8 +635,8 @@ public class IndexController {
 	{
 		model.addAttribute("productoClienteId", new ProductoClienteId());
 		model.addAttribute("titulo", "Borrar venta");
-		model.addAttribute("idCliente", "Id cliente:");
-		model.addAttribute("idProducto", "Id producto:");
+		model.addAttribute("clienteId", "Id cliente:");
+		model.addAttribute("productoId", "Id producto:");
 		model.addAttribute("fecha", "Fecha:");
 		return "/ventas/borrar";
 	}
@@ -681,6 +681,14 @@ public class IndexController {
 		model.addAttribute("titulo", "Listar usuarios");
 		model.addAttribute("usuarios", usuarioService.findAll());
 		return "usuarios/listar";
+	}
+	
+	@GetMapping("/usuarios/usuariosproductos")
+	public String listarUsuariosProductos(Model model)
+	{
+		model.addAttribute("titulo", "Listar usuarios con productos");
+		model.addAttribute("clientes", clienteService.clientesConUsuarios());
+		return "usuarios/usuariosproductos";
 	}
 	
 	@GetMapping("/usuarios/anyadir")
